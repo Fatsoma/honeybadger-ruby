@@ -68,6 +68,18 @@ Feature: Install the Gem in a Rails application
     Then the output should contain "Better Errors detected"
     And I should receive a Honeybadger notification
 
+  @rails_3
+  Scenario: Running the test task with rack-mini-profiler installed
+    When I configure Rails with:
+      """
+      require 'rack-mini-profiler'
+      """
+    And I configure the notifier to use "myapikey" as an API key
+    And I configure my application to require Honeybadger
+    And I run `rake honeybadger:test`
+    Then the output should not contain "rake aborted"
+    And I should receive a Honeybadger notification
+
   Scenario: Rescue an exception in a controller
     When I configure my application to require Honeybadger
     And I configure Honeybadger with:
@@ -116,6 +128,25 @@ Feature: Install the Gem in a Rails application
     And I perform a request to "http://example.com:123/test/index?param=value"
     Then the output should contain "Honeybadger Error 123456789"
     And the output should not contain "<!-- HONEYBADGER ERROR -->"
+
+  @rails_3
+  Scenario: Output when user feedback is enabled
+    When I configure my application to require Honeybadger
+    And I configure Honeybadger with:
+      """
+      config.api_key = 'myapikey'
+      config.logger = Logger.new(STDOUT)
+      """
+    And I define a response for "TestController#index":
+      """
+      session[:value] = "test"
+      raise RuntimeError, "some message"
+      """
+    And I configure the user feedback form
+    And I route "/test/index" to "test#index"
+    And I perform a request to "http://example.com:123/test/index?param=value"
+    Then the output should contain "honeybadger_feedback_token"
+    And the output should not contain "<!-- HONEYBADGER FEEDBACK -->"
 
   Scenario: Log output in production environments
     When I configure my application to require Honeybadger

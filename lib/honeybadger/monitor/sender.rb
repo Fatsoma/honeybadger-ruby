@@ -10,19 +10,17 @@ module Honeybadger
           return nil
         end
 
-        response = client.post do |p|
-          p.url "/v1/metrics"
-          p.body = data.to_json
+        response = rescue_http_errors do
+          http_connection.post('/v1/metrics', data.to_json, http_headers)
         end
 
-        if response.success?
+        if Net::HTTPSuccess === response
           true
         else
-          Honeybadger.configuration.features['metrics'] = false if response.status == 403
-          log(:error, "Metrics Failure", response, data)
+          Honeybadger.configuration.features['metrics'] = false if Net::HTTPForbidden === response
+          log(:error, "Metrics Failure: #{response.class}", response, data)
           false
         end
-
       rescue => e
         log(:error, "[Honeybadger::Monitor::Sender#send_metrics] Error: #{e.class} - #{e.message}\nBacktrace:\n#{e.backtrace.join("\n\t")}")
         true

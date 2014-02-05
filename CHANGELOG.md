@@ -1,4 +1,18 @@
-## Honeybadger 1.10.0 (unreleased) ##
+## Honeybadger 1.10.1 ##
+
+* Stop sending ENV with rake exceptions
+
+  *Joshua Wood*
+
+## Honeybadger 1.10.0 ##
+
+* Collect user feedback when an error occurs.
+
+  *Joshua Wood*
+
+* Remove Faraday dependency (restore net/http code)
+
+  *Joshua Wood*
 
 * Added params filtering by regex
 
@@ -13,6 +27,18 @@
   *Joshua Wood*
 
 * Filter query strings.
+
+  *Joshua Wood*
+
+## Honeybadger 1.9.5 ##
+
+* Call through middleware stack when disabling better_errors in test
+  task (fixes incorrect error notification bug).
+
+  *Joshua Wood*
+
+* Fix test rake task/rack-mini-profiler bug where it requires an IP
+  address to identify users.
 
   *Joshua Wood*
 
