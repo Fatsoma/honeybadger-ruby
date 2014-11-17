@@ -184,7 +184,7 @@ describe Honeybadger::Configuration do
 
   it "uses development and test as development environments by default" do
     config = Honeybadger::Configuration.new
-    expect(config.development_environments).to eq %w(development test cucumber)
+    expect(config.development_environments).to eq %w(development test cucumber local)
   end
 
   it "is public in a public environment" do
